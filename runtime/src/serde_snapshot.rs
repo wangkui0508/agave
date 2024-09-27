@@ -57,10 +57,12 @@ use {
         thread::Builder,
     },
     storage::SerializableStorage,
+    types::SerdeAccountsLtHash,
 };
 
 mod storage;
 mod tests;
+mod types;
 mod utils;
 
 pub(crate) use {
@@ -382,6 +384,48 @@ where
     deserialize_from::<_, _>(stream)
 }
 
+<<<<<<< HEAD
+=======
+/// Extra fields that are deserialized from the end of snapshots.
+///
+/// Note that this struct's fields should stay synced with the fields in
+/// ExtraFieldsToSerialize with the exception that new "extra fields" should be
+/// added to this struct a minor release before they are added to the serialize
+/// struct.
+#[cfg_attr(feature = "frozen-abi", derive(AbiExample))]
+#[cfg_attr(feature = "dev-context-only-utils", derive(PartialEq))]
+#[derive(Clone, Debug, Deserialize)]
+struct ExtraFieldsToDeserialize {
+    #[serde(deserialize_with = "default_on_eof")]
+    lamports_per_signature: u64,
+    #[serde(deserialize_with = "default_on_eof")]
+    incremental_snapshot_persistence: Option<BankIncrementalSnapshotPersistence>,
+    #[serde(deserialize_with = "default_on_eof")]
+    epoch_accounts_hash: Option<Hash>,
+    #[serde(deserialize_with = "default_on_eof")]
+    versioned_epoch_stakes: HashMap<u64, VersionedEpochStakes>,
+    #[serde(deserialize_with = "default_on_eof")]
+    #[allow(dead_code)]
+    accounts_lt_hash: Option<SerdeAccountsLtHash>,
+}
+
+/// Extra fields that are serialized at the end of snapshots.
+///
+/// Note that this struct's fields should stay synced with the fields in
+/// ExtraFieldsToDeserialize with the exception that new "extra fields" should
+/// be added to the deserialize struct a minor release before they are added to
+/// this one.
+#[cfg_attr(feature = "frozen-abi", derive(AbiExample))]
+#[cfg_attr(feature = "dev-context-only-utils", derive(Default, PartialEq))]
+#[derive(Debug, Serialize)]
+pub struct ExtraFieldsToSerialize<'a> {
+    pub lamports_per_signature: u64,
+    pub incremental_snapshot_persistence: Option<&'a BankIncrementalSnapshotPersistence>,
+    pub epoch_accounts_hash: Option<EpochAccountsHash>,
+    pub versioned_epoch_stakes: HashMap<u64, VersionedEpochStakes>,
+}
+
+>>>>>>> 690fad08d4 (Supports deserializing accounts lt hash in snapshots (#2994))
 fn deserialize_bank_fields<R>(
     mut stream: &mut BufReader<R>,
 ) -> Result<
@@ -398,7 +442,18 @@ where
         deserialize_from::<_, DeserializableVersionedBank>(&mut stream)?.into();
     let accounts_db_fields = deserialize_accounts_db_fields(stream)?;
     // Process extra fields
+<<<<<<< HEAD
     let lamports_per_signature = ignore_eof_error(deserialize_from(&mut stream))?;
+=======
+    let ExtraFieldsToDeserialize {
+        lamports_per_signature,
+        incremental_snapshot_persistence,
+        epoch_accounts_hash,
+        versioned_epoch_stakes,
+        accounts_lt_hash: _,
+    } = extra_fields;
+
+>>>>>>> 690fad08d4 (Supports deserializing accounts lt hash in snapshots (#2994))
     bank_fields.fee_rate_governor = bank_fields
         .fee_rate_governor
         .clone_with_lamports_per_signature(lamports_per_signature);

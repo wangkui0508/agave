@@ -1236,6 +1236,25 @@ pub struct AccountHash(pub Hash);
 // This also ensures there are no padding bytes, which is required to safely implement Pod
 const _: () = assert!(std::mem::size_of::<AccountHash>() == std::mem::size_of::<Hash>());
 
+<<<<<<< HEAD
+=======
+/// The AccountHash for a zero-lamport account
+pub const ZERO_LAMPORT_ACCOUNT_HASH: AccountHash =
+    AccountHash(Hash::new_from_array([0; HASH_BYTES]));
+
+/// Lattice hash of an account
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct AccountLtHash(pub LtHash);
+
+/// The AccountLtHash for a zero-lamport account
+pub const ZERO_LAMPORT_ACCOUNT_LT_HASH: AccountLtHash =
+    AccountLtHash(LtHash([0; LtHash::NUM_ELEMENTS]));
+
+/// Lattice hash of all accounts
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct AccountsLtHash(pub LtHash);
+
+>>>>>>> 690fad08d4 (Supports deserializing accounts lt hash in snapshots (#2994))
 /// Hash of accounts
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum AccountsHashKind {
