@@ -8097,6 +8097,7 @@ name = "solana-send-transaction-service"
 version = "2.1.1"
 dependencies = [
  "crossbeam-channel",
+ "itertools 0.12.1",
  "log",
  "solana-client",
  "solana-connection-cache",
