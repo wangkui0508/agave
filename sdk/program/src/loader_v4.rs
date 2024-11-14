@@ -12,7 +12,7 @@ use crate::{
 crate::declare_id!("LoaderV411111111111111111111111111111111111");
 
 /// Cooldown before a program can be un-/redeployed again
-pub const DEPLOYMENT_COOLDOWN_IN_SLOTS: u64 = 750;
+pub const DEPLOYMENT_COOLDOWN_IN_SLOTS: u64 = 1;
 
 #[repr(u64)]
 #[cfg_attr(feature = "frozen-abi", derive(AbiExample))]
