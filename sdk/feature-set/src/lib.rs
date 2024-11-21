@@ -885,6 +885,10 @@ pub mod remove_accounts_executable_flag_checks {
     solana_pubkey::declare_id!("FfgtauHUWKeXTzjXkua9Px4tNGBFHKZ9WaigM5VbbzFx");
 }
 
+pub mod lift_cpi_caller_restriction {
+    solana_pubkey::declare_id!("HcW8ZjBezYYgvcbxNJwqv1t484Y2556qJsfNDWvJGZRH");
+}
+
 lazy_static! {
     /// Map of feature identifiers to user-visible description
     pub static ref FEATURE_NAMES: HashMap<Pubkey, &'static str> = [
@@ -1101,6 +1105,7 @@ lazy_static! {
         (enable_secp256r1_precompile::id(), "Enable secp256r1 precompile SIMD-0075"),
         (migrate_stake_program_to_core_bpf::id(), "Migrate Stake program to Core BPF SIMD-0196 #3655"),
         (remove_accounts_executable_flag_checks::id(), "Remove checks of accounts is_executable flag SIMD-0162"),
+        (lift_cpi_caller_restriction::id(), "Lift the restriction in CPI that the caller must have the callee as an instruction account #2202"),
         /*************** ADD NEW FEATURES HERE ***************/
     ]
     .iter()
