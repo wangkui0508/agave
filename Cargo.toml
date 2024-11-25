@@ -363,7 +363,11 @@ reqwest = { version = "0.11.27", default-features = false }
 reqwest-middleware = "0.2.5"
 rolling-file = "0.2.0"
 rpassword = "7.3"
+<<<<<<< HEAD
 rustls = { version = "0.23.15", default-features = false }
+=======
+rustls = { version = "0.23.18", default-features = false }
+>>>>>>> 92ffcabea9 (build(deps): bump rustls from 0.23.17 to 0.23.18 (#3772))
 scopeguard = "1.2.0"
 semver = "1.0.23"
 seqlock = "0.2.0"
