@@ -8117,6 +8117,7 @@ checksum = "468aa43b7edb1f9b7b7b686d5c3aeb6630dc1708e86e31343499dd5c4d775183"
 name = "solana-send-transaction-service"
 version = "2.1.5"
 dependencies = [
+ "async-trait",
  "crossbeam-channel",
  "log",
  "solana-client",
@@ -8124,9 +8125,12 @@ dependencies = [
  "solana-logger",
  "solana-measure",
  "solana-metrics",
+ "solana-quic-client",
  "solana-runtime",
  "solana-sdk",
- "solana-tpu-client",
+ "solana-tpu-client-next",
+ "tokio",
+ "tokio-util 0.7.12",
 ]
 
 [[package]]
