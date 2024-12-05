@@ -72,16 +72,24 @@ fn main() {
     let mut create_time = Measure::start("create accounts");
     let acc_in_slot = num_accounts / num_slots;
     let mut start = Instant::now();
-    for i in 0..num_slots {
-        if i != 0 && i % 10 == 0 {
-            println!("Now {} elpased {:.2?}", i, start.elapsed());
+    for j in 0..(num_slots / 20) {
+        println!("Now {} elpased {:.2?}", j * 20, start.elapsed());
+        let range = (j * 20..j * 20 + 20);
+        std::thread::scope(|s| {
+            for slot in range.clone() {
+                let accounts = &accounts;
+                s.spawn(move|| {
+                    create_test_accounts_TT(
+                        accounts,
+                        acc_in_slot,
+                        slot as u64,
+                    );
+                });
+            }
+        });
+        for i in range {
+            accounts.add_root(i as u64);
         }
-        create_test_accounts_TT(
-            &accounts,
-            acc_in_slot,
-            i as u64,
-        );
-        accounts.add_root(i as u64);
     }
     create_time.stop();
     println!(
@@ -92,9 +100,21 @@ fn main() {
     );
 
     let mut time = Measure::start("update");
-    for slot in 0..(num_slots / 5) {
-        update_accounts_bench_TT(&accounts, acc_in_slot, num_accounts, (num_slots + slot) as u64);
-        accounts.add_root((num_slots + slot) as u64);
+    let num_update_slots = num_slots / 5;
+    for j in 0..num_update_slots / 20 {
+        let start = num_slots + j * 20;
+        let range = (start..start + 20);
+        std::thread::scope(|s| {
+            for slot in range.clone() {
+                let accounts = &accounts;
+                s.spawn(move|| {
+                    update_accounts_bench_TT(accounts, acc_in_slot, num_accounts, slot as u64);
+                });
+            }
+        });
+        for i in range {
+            accounts.add_root(i as u64);
+        }
     }
     time.stop();
     println!("update time {}", time);
