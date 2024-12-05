@@ -9698,6 +9698,58 @@ pub mod test_utils {
         super::*,
         crate::{accounts::Accounts, append_vec::aligned_stored_size},
     };
+    use byteorder::{BigEndian, ByteOrder};
+    use sha2::{Digest, Sha256};
+
+    pub fn create_test_accounts_TT(
+        accounts: &Accounts,
+        num: usize,
+        slot: Slot,
+    ) {
+        let data_size = 0;
+        if accounts
+            .accounts_db
+            .storage
+            .get_slot_storage_entry(slot)
+            .is_none()
+        {
+            let bytes_required = num * aligned_stored_size(data_size);
+            // allocate an append vec for this slot that can hold all the test accounts. This prevents us from creating more than 1 append vec for this slot.
+            _ = accounts.accounts_db.create_and_insert_store(
+                slot,
+                AccountsDb::page_align(bytes_required as u64),
+                "create_test_accounts",
+            );
+        }
+
+        let start = slot * (num as u64);
+        let end = (slot + 1) * (num as u64);
+        let mut blk = Vec::with_capacity(num);
+        for i in start..end {
+            let pubkey = get_pubkey(i as u64);
+            let account = AccountSharedData::new(
+                i as u64,
+                data_size,
+                AccountSharedData::default().owner(),
+            );
+            blk.push((pubkey, account));
+        }
+        let mut pairs = Vec::with_capacity(blk.len());
+        for pair in blk.iter() {
+            pairs.push((&pair.0, &pair.1));
+        }
+        //accounts.store_slow_uncached(slot, &pubkey, &account);
+        accounts.accounts_db.store_uncached(slot, &pairs[..]);
+    }
+
+    fn get_pubkey(n: u64) -> Pubkey {
+        let mut bz = [0u8; 8];
+        BigEndian::write_u64(&mut bz[..], n);
+        let mut hasher = Sha256::new();
+        hasher.update(&bz[..]);
+        let hash: [u8; 32] = hasher.finalize().into();
+        Pubkey::new_from_array(hash)
+    }
 
     pub fn create_test_accounts(
         accounts: &Accounts,
@@ -9731,6 +9783,23 @@ pub mod test_utils {
             accounts.store_slow_uncached(slot, &pubkey, &account);
             pubkeys.push(pubkey);
         }
+    }
+
+    pub fn update_accounts_bench_TT(accounts: &Accounts, acc_in_slot: usize, num_accounts: usize, slot: u64) {
+        let mut blk = Vec::with_capacity(acc_in_slot);
+        for _ in 0..acc_in_slot {
+            let n = thread_rng().gen_range(0..num_accounts);
+            let pubkey = get_pubkey(n as u64);
+            let account = AccountSharedData::new(slot, 0, AccountSharedData::default().owner());
+            //accounts.store_slow_uncached(slot, &pubkey, &account);
+            blk.push((pubkey, account));
+        }
+        let mut pairs = Vec::with_capacity(blk.len());
+        for pair in blk.iter() {
+            pairs.push((&pair.0, &pair.1));
+        }
+        //accounts.store_slow_uncached(slot, &pubkey, &account);
+        accounts.accounts_db.store_uncached(slot, &pairs[..]);
     }
 
     // Only used by bench, not safe to call otherwise accounts can conflict with the

@@ -9,9 +9,11 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
+byteorder.workspace = true
 clap = { workspace = true }
 log = { workspace = true }
 rayon = { workspace = true }
+sha2.workspace = true
 solana-accounts-db = { workspace = true, features = ["dev-context-only-utils"] }
 solana-logger = { workspace = true }
 solana-measure = { workspace = true }

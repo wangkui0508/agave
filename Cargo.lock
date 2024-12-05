@@ -5432,9 +5432,11 @@ dependencies = [
 name = "solana-accounts-bench"
 version = "2.0.18"
 dependencies = [
+ "byteorder",
  "clap 2.33.3",
  "log",
  "rayon",
+ "sha2 0.10.8",
  "solana-accounts-db",
  "solana-logger",
  "solana-measure",
@@ -5483,6 +5485,7 @@ dependencies = [
  "bv",
  "bytemuck",
  "bytemuck_derive",
+ "byteorder",
  "bzip2",
  "criterion",
  "crossbeam-channel",
@@ -5509,6 +5512,7 @@ dependencies = [
  "serde",
  "serde_bytes",
  "serde_derive",
+ "sha2 0.10.8",
  "smallvec",
  "solana-accounts-db",
  "solana-bucket-map",
